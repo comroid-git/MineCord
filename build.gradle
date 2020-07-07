@@ -1,0 +1,56 @@
+tasks.findByName('wrapper')?.configure {
+    gradleVersion = '6.2'
+    distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
+}
+
+apply plugin: 'java'
+apply from: 'gradle/vars.gradle'
+apply from: 'gradle/jar.gradle'
+
+group 'org.comroid'
+version '0.10-SNAPSHOT'
+
+ext {
+    mcVersion = '1.14.4'
+    spigotRC = 'R0.1'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    maven {
+        url = 'https://maven.jetbrains.space/comroid/repo'
+        credentials.username = 'Anonymous.User'
+        credentials.password = 'anonymous'
+    }
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    jcenter()
+    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+}
+
+dependencies {
+    // comroid utilities
+    implementation 'org.comroid:common-util:1.5.0-SNAPSHOT'
+    implementation 'org.comroid:uniform:0.12.1-SNAPSHOT'
+    implementation 'org.comroid:spiroid-api:0.3.0-SNAPSHOT'
+
+    // Discord4J
+    implementation 'com.discord4j:discord4j-core:3.1.0.RC1'
+
+    // Flogger
+    implementation 'com.google.flogger:flogger:0.5.1'
+    runtimeOnly('com.google.flogger:flogger-log4j-backend:0.5.1') {
+        exclude group: 'com.sun.jmx', module: 'jmxri'
+        exclude group: 'com.sun.jdmk', module: 'jmxtools'
+        exclude group: 'javax.jms', module: 'jms'
+    }
+
+    // JSON Serializer
+    runtimeOnly 'com.alibaba:fastjson:1.2.68'
+
+    // Additional Stuff
+    compileOnly "org.spigotmc:spigot-api:$mcVersion-$spigotRC-SNAPSHOT"
+    compileOnly 'org.jetbrains:annotations:19.0.0'
+}

@@ -1,0 +1,12 @@
+main: org.comroid.minecord.MineCord
+name: ${rootProject.name}
+version: $pluginVersion
+author: $userbase
+description: $pluginDescription
+api-version: $mcVersionMj
+
+commands:
+  minecord:
+    description: MineCord configuration command
+    permission: minecord.admin
+    permission-message: "§7[§9e2uClaim§7] §cYou are missing the permission: §be2uclaim.admin§c!"
