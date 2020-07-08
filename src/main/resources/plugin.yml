@@ -1,9 +1,11 @@
 main: org.comroid.minecord.MineCord
-name: ${rootProject.name}
+name: ${project.name}
 version: $pluginVersion
 author: $userbase
 description: $pluginDescription
 api-version: $mcVersionMj
+depend:
+  - Spiroid
 
 commands:
   minecord:
