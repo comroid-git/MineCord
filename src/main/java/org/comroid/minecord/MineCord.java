@@ -14,7 +14,6 @@ import java.util.Optional;
 import java.util.logging.Level;
 
 public final class MineCord extends AbstractPlugin {
-    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static DiscordApi bot;
 
     private Optional<String> getBotToken() {
@@ -26,18 +25,12 @@ public final class MineCord extends AbstractPlugin {
     }
 
     @Override
-    public void onLoad() {
-        getConfig();
-        getConfig("users");
-        saveDefaultConfig();
-    }
-
-    @Override
-    public void onEnable() {
-        logger.at(Level.INFO).log("Loading Discord Subservice...");
-
+    public void enable() {
         getServer().getPluginManager()
                 .registerEvents(ChatHandler.INSTANCE, this);
+        getLogger().log(Level.INFO, "Attached Chathandler");
+
+        getLogger().log(Level.INFO, "Loading Discord Subservice...");
 
         final Optional<String> token = getBotToken();
         if (!token.isPresent())
@@ -48,20 +41,25 @@ public final class MineCord extends AbstractPlugin {
                 .setToken(token.get())
                 .login()
                 .join();
+        getLogger().log(Level.INFO, "Logged in to Discord as user " + bot.getYourself().getDiscriminatedName());
 
-        logger.at(Level.INFO).log(
-                "Logged in to Discord as user %s",
-                bot.getYourself().getDiscriminatedName()
-        );
+        bot.addListener(BotHandler.INSTANCE);
+        getLogger().log(Level.INFO,"Attached Bot Listener");
+
+                ChatHandler.INSTANCE.initialize();
+        getLogger().log(Level.INFO, String.format("Initialized %d ChatHandler connections", ChatHandler.postToChannels.size()));
     }
 
     @Override
-    public void onDisable() {
+    public void disable() {
+        ChatHandler.INSTANCE.deinitialize();
+        getLogger().log(Level.INFO, String.format("Stored %d ChatHandler connections", ChatHandler.postToChannels.size()));
+
         // shutdown bot
-        logger.at(Level.INFO).log("Shutting down discord bot...");
+        getLogger().log(Level.INFO, "Shutting down discord bot...");
         bot.disconnect();
         bot = null;
-        logger.at(Level.INFO).log("Discord bot shut down");
+        getLogger().log(Level.INFO, "Discord bot shut down");
     }
 
     @Override
@@ -71,6 +69,7 @@ public final class MineCord extends AbstractPlugin {
         switch (name) {
             case "config":
                 config.set("discord-token", "<token here>");
+                config.set("connections", new ArrayList<>());
 
                 break;
             case "users":

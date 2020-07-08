@@ -36,7 +36,9 @@ public enum MainSetupCommands implements SpiroidCommand {
                         ))
                         .join();
             },
-            filter -> new String[]{"<discord server text channel ID, bot must see the channel>"}
+            filter -> filter.matches("\\d{6,20}")
+                    ? new String[]{filter}
+                    : new String[]{"<discord server text channel ID, bot must see the channel>"}
     );
 
     private final String name;
