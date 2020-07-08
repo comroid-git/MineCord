@@ -32,8 +32,8 @@ public enum ChatHandler implements Listener, BiInitializable {
         channels.pipe()
                 .bi(ServerChannel::getServer)
                 .mapSecond(DefaultEmbedFactory::create)
-                .peek((stc, embed) -> embed.addField(event.getPlayer().getDisplayName(), event.getMessage())
-                        .setFooter("Minecraft Server Chat", "https://www.minecraft.net/etc.clientlibs/minecraft/clientlibs/main/resources/android-icon-192x192.png"))
+                .peek((stc, embed) -> embed.setDescription(event.getMessage())
+                        .setFooter(event.getPlayer().getName(), String.format("https://minotar.net/helm/%s/100.png", event.getPlayer().getName())))
                 .forEach((BiConsumer<ServerTextChannel, EmbedBuilder>) Messageable::sendMessage);
     }
 
