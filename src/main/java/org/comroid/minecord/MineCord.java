@@ -28,10 +28,9 @@ public final class MineCord extends AbstractPlugin {
     public void enable() {
         getServer().getPluginManager()
                 .registerEvents(ChatHandler.INSTANCE, this);
-        getLogger().log(Level.INFO, "Attached Chathandler");
+        getLogger().log(Level.INFO, "Attached ChatHandler");
 
         getLogger().log(Level.INFO, "Loading Discord Subservice...");
-
         final Optional<String> token = getBotToken();
         if (!token.isPresent())
             throw new NoSuchElementException("No Bot token defined in config.yml");
