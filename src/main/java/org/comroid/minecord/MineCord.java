@@ -22,6 +22,7 @@ public final class MineCord extends AbstractPlugin {
     @Override
     public void onLoad() {
         getConfig();
+        getConfig("users");
         saveDefaultConfig();
     }
 
