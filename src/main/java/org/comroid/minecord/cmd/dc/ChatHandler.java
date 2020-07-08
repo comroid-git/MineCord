@@ -4,7 +4,6 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.comroid.api.Polyfill;
 import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 import org.comroid.minecord.MineCord;
 import org.comroid.mutatio.ref.Reference;
@@ -15,15 +14,12 @@ import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.channel.ServerChannel;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.message.Message;
-import org.javacord.api.entity.message.Messageable;
+import org.javacord.api.entity.message.MessageSet;
 import org.javacord.api.entity.message.embed.Embed;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.message.embed.EmbedFooter;
 
-import java.util.Comparator;
-import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
 public enum ChatHandler implements Listener, BiInitializable {
@@ -34,6 +30,34 @@ public enum ChatHandler implements Listener, BiInitializable {
             .map(id -> MineCord.bot.getServerTextChannelById(id))
             .flatMap(opt -> opt.map(Reference::constant).orElseGet(Reference::empty))
             .span();
+
+    private static CompletableFuture<Message> appendEmbed(ServerTextChannel stc, String displayName, EmbedBuilder newContent) {
+        return stc.getMessages(1)
+                .thenApplyAsync(MessageSet::getNewestMessage)
+                .thenComposeAsync(opt -> opt
+                        .filter(msg -> msg.getAuthor().isYourself())
+                        .filter(latest -> latest.getEmbeds()
+                                .get(0)
+                                .getFooter()
+                                .flatMap(EmbedFooter::getText)
+                                .orElse("")
+                                .equals(displayName))
+                        .map(message -> {
+                            final Embed old = message.getEmbeds().get(0);
+                            final EmbedBuilder builder = old.toBuilder();
+
+                            builder.setDescription(
+                                    old.getDescription()
+                                            .map(str -> str + '\n' + ReflectionHelper.forceGetField(newContent.getDelegate(), "description"))
+                                            .orElseGet(() -> ReflectionHelper.forceGetField(newContent.getDelegate(), "description"))
+                            );
+
+                            return message.edit(builder).thenApply(nil -> message);
+                        })
+                        .orElseGet(() -> stc.sendMessage(newContent))
+                );
+
+    }
 
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
@@ -46,31 +70,6 @@ public enum ChatHandler implements Listener, BiInitializable {
                                 String.format("https://minotar.net/helm/%s/100.png", event.getPlayer().getName())
                         ))
                 .forEach((stc, embed) -> appendEmbed(stc, event.getPlayer().getDisplayName(), embed));
-    }
-
-    private static CompletableFuture<Message> appendEmbed(ServerTextChannel stc, String displayName, EmbedBuilder newContent) {
-        return stc.getMessagesAsStream()
-                .filter(msg -> msg.getAuthor().isYourself())
-                .max(Comparator.comparingLong(msg -> msg.getId() >> 22))
-                .filter(latest -> latest.getEmbeds()
-                        .get(0)
-                        .getFooter()
-                        .flatMap(EmbedFooter::getText)
-                        .orElse("")
-                        .equals(displayName))
-                .map(message -> {
-                    final Embed old = message.getEmbeds().get(0);
-                    final EmbedBuilder builder = old.toBuilder();
-
-                    builder.setDescription(
-                            old.getDescription()
-                            .map(str -> str + '\n' + ReflectionHelper.forceGetField(newContent.getDelegate(), "description"))
-                            .orElseGet(() -> ReflectionHelper.forceGetField(newContent.getDelegate(), "description"))
-                    );
-
-                    return message.edit(builder).thenApply(nil -> message);
-                })
-                .orElseGet(() -> stc.sendMessage(newContent));
     }
 
     @Override
