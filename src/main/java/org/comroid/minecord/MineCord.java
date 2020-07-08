@@ -26,6 +26,8 @@ public final class MineCord extends AbstractPlugin {
         final Optional<String> token = getBotToken();
         if (!token.isPresent())
             throw new NoSuchElementException("No Bot token defined in config.yml");
+        if (bot != null)
+            throw new IllegalStateException("Bot is not null!");
         this.bot = DiscordClient.create(token.get()).login().block();
 
         logger.at(Level.INFO).log("Logged in to Discord as user %s",
@@ -33,6 +35,15 @@ public final class MineCord extends AbstractPlugin {
                         .map(usr -> String.format("%s#%s", usr.getUsername(), usr.getDiscriminator()))
                         .block()
         );
+    }
+
+    @Override
+    public void onDisable() {
+        // shutdown bot
+        logger.at(Level.INFO).log("Shutting down discord bot...");
+        this.bot.logout().block();
+        this.bot = null;
+        logger.at(Level.INFO).log("Discord bot shut down");
     }
 
     @Override
