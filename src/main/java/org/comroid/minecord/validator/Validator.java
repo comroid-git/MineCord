@@ -81,4 +81,12 @@ public final class Validator {
     public static int count() {
         return registered.size();
     }
+
+    public static boolean isRegistered(UUID uuid) {
+        return registered.containsKey(uuid);
+    }
+
+    public static User getDiscordUser(UUID uuid) {
+        return MineCord.bot.getUserById(registered.get(uuid)).join();
+    }
 }
