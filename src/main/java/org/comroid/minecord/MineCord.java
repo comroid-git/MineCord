@@ -2,6 +2,8 @@ package org.comroid.minecord;
 
 import com.google.common.flogger.FluentLogger;
 import org.bukkit.configuration.MemoryConfiguration;
+import org.comroid.minecord.cmd.dc.ChatHandler;
+import org.comroid.minecord.cmd.mc.SpigotCommands;
 import org.comroid.spiroid.api.AbstractPlugin;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
@@ -20,7 +22,7 @@ public final class MineCord extends AbstractPlugin {
     }
 
     public MineCord() {
-        super("config", "users");
+        super(SpigotCommands.values(), "config", "users");
     }
 
     @Override
@@ -28,9 +30,6 @@ public final class MineCord extends AbstractPlugin {
         getConfig();
         getConfig("users");
         saveDefaultConfig();
-
-        for (McCommands cmd : McCommands.values())
-            commands.put(cmd.getName(), cmd);
     }
 
     @Override

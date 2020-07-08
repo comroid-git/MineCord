@@ -1,9 +1,10 @@
-package org.comroid.minecord;
+package org.comroid.minecord.cmd.dc;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
+import org.comroid.minecord.MineCord;
 import org.comroid.mutatio.ref.Reference;
 import org.comroid.mutatio.span.Span;
 import org.javacord.api.entity.channel.ServerChannel;
