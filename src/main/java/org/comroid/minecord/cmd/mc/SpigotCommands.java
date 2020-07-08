@@ -56,11 +56,7 @@ public enum SpigotCommands implements SpiroidCommand {
                             .map(OfflinePlayer::getUniqueId)
                             .map(Validator::getDiscordUser)
                             .map(User::getDiscriminatedName)
-                            .map(name -> String.format(
-                                    "The discord username of %s is %s",
-                                    args[0],
-                                    name
-                            ))
+                            .map(name -> String.format("The discord username of %s is %s", args[0], name))
                             .orElseGet(MessageSupplier.format("No user found with name %s", args[0]));
                 }
                 throw new AssertionError();
