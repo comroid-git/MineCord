@@ -20,6 +20,12 @@ public final class MineCord extends AbstractPlugin {
     }
 
     @Override
+    public void onLoad() {
+        getConfig();
+        saveDefaultConfig();
+    }
+
+    @Override
     public void onEnable() {
         logger.at(Level.INFO).log("Loading Discord Subservice...");
 
