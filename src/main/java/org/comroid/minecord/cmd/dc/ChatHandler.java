@@ -4,17 +4,25 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.comroid.api.Polyfill;
 import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 import org.comroid.minecord.MineCord;
 import org.comroid.mutatio.ref.Reference;
 import org.comroid.mutatio.span.Span;
 import org.comroid.spiroid.api.model.BiInitializable;
+import org.comroid.util.ReflectionHelper;
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.channel.ServerChannel;
 import org.javacord.api.entity.channel.ServerTextChannel;
+import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.Messageable;
+import org.javacord.api.entity.message.embed.Embed;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
+import org.javacord.api.entity.message.embed.EmbedFooter;
 
+import java.util.Comparator;
+import java.util.NoSuchElementException;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
@@ -33,8 +41,36 @@ public enum ChatHandler implements Listener, BiInitializable {
                 .bi(ServerChannel::getServer)
                 .mapSecond(DefaultEmbedFactory::create)
                 .peek((stc, embed) -> embed.setDescription(event.getMessage())
-                        .setFooter(event.getPlayer().getName(), String.format("https://minotar.net/helm/%s/100.png", event.getPlayer().getName())))
-                .forEach((BiConsumer<ServerTextChannel, EmbedBuilder>) Messageable::sendMessage);
+                        .setFooter(
+                                event.getPlayer().getDisplayName(),
+                                String.format("https://minotar.net/helm/%s/100.png", event.getPlayer().getName())
+                        ))
+                .forEach((stc, embed) -> appendEmbed(stc, event.getPlayer().getDisplayName(), embed));
+    }
+
+    private static CompletableFuture<Message> appendEmbed(ServerTextChannel stc, String displayName, EmbedBuilder newContent) {
+        return stc.getMessagesAsStream()
+                .filter(msg -> msg.getAuthor().isYourself())
+                .max(Comparator.comparingLong(msg -> msg.getId() >> 22))
+                .filter(latest -> latest.getEmbeds()
+                        .get(0)
+                        .getFooter()
+                        .flatMap(EmbedFooter::getText)
+                        .orElse("")
+                        .equals(displayName))
+                .map(message -> {
+                    final Embed old = message.getEmbeds().get(0);
+                    final EmbedBuilder builder = old.toBuilder();
+
+                    builder.setDescription(
+                            old.getDescription()
+                            .map(str -> str + '\n' + ReflectionHelper.forceGetField(newContent.getDelegate(), "description"))
+                            .orElseGet(() -> ReflectionHelper.forceGetField(newContent.getDelegate(), "description"))
+                    );
+
+                    return message.edit(builder).thenApply(nil -> message);
+                })
+                .orElseGet(() -> stc.sendMessage(newContent));
     }
 
     @Override
