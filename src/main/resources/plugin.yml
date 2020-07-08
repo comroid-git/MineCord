@@ -11,4 +11,4 @@ commands:
   minecord:
     description: MineCord configuration command
     permission: minecord.admin
-    permission-message: "§7[§9e2uClaim§7] §cYou are missing the permission: §be2uclaim.admin§c!"
+    permission-message: "§7[§9Minecord§7] §cYou are missing the permission: §bminecord.admin§c!"

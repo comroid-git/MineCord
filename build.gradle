@@ -38,9 +38,11 @@ dependencies {
     // comroid utilities
     implementation project(':common-util:uniform')
     implementation project(':Spiroid:plugin-api')
+    implementation project(':javacord-utilities').tasks.findByName('jar').outputs.files
 
     // Discord Lib
     included 'org.javacord:javacord:3.0.6'
+    included project(':javacord-utilities').tasks.findByName('jar').outputs.files
 
     // Flogger
     implementation 'com.google.flogger:flogger:0.5.1'
@@ -48,6 +50,11 @@ dependencies {
     // Additional Stuff
     compileOnly "org.spigotmc:spigot-api:$mcVersion-$spigotRC-SNAPSHOT"
     compileOnly 'org.jetbrains:annotations:19.0.0'
+    compileOnly('com.google.flogger:flogger-log4j-backend:0.5.1') {
+        exclude group: 'com.sun.jmx', module: 'jmxri'
+        exclude group: 'com.sun.jdmk', module: 'jmxtools'
+        exclude group: 'javax.jms', module: 'jms'
+    }
 
     configurations.implementation.extendsFrom configurations.included
 }

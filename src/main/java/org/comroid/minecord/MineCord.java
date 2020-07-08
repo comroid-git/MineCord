@@ -13,10 +13,14 @@ import java.util.logging.Level;
 
 public final class MineCord extends AbstractPlugin {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
-    public DiscordApi bot;
+    public static DiscordApi bot;
 
     private Optional<String> getBotToken() {
         return Optional.ofNullable(getConfig().getString("discord-token"));
+    }
+
+    public MineCord() {
+        super("config", "users");
     }
 
     @Override
@@ -24,18 +28,24 @@ public final class MineCord extends AbstractPlugin {
         getConfig();
         getConfig("users");
         saveDefaultConfig();
+
+        for (McCommands cmd : McCommands.values())
+            commands.put(cmd.getName(), cmd);
     }
 
     @Override
     public void onEnable() {
         logger.at(Level.INFO).log("Loading Discord Subservice...");
 
+        getServer().getPluginManager()
+                .registerEvents(ChatHandler.INSTANCE, this);
+
         final Optional<String> token = getBotToken();
         if (!token.isPresent())
             throw new NoSuchElementException("No Bot token defined in config.yml");
         if (bot != null)
             throw new IllegalStateException("Bot is not null!");
-        this.bot = new DiscordApiBuilder()
+        bot = new DiscordApiBuilder()
                 .setToken(token.get())
                 .login()
                 .join();
@@ -50,8 +60,8 @@ public final class MineCord extends AbstractPlugin {
     public void onDisable() {
         // shutdown bot
         logger.at(Level.INFO).log("Shutting down discord bot...");
-        this.bot.disconnect();
-        this.bot = null;
+        bot.disconnect();
+        bot = null;
         logger.at(Level.INFO).log("Discord bot shut down");
     }
 
