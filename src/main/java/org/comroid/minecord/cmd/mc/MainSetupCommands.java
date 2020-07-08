@@ -1,5 +1,6 @@
 package org.comroid.minecord.cmd.mc;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 import org.comroid.minecord.MineCord;
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public enum MainSetupCommands implements SpiroidCommand {
     CONNECT(
@@ -39,6 +41,51 @@ public enum MainSetupCommands implements SpiroidCommand {
             filter -> filter.matches("\\d{6,20}")
                     ? new String[]{filter}
                     : new String[]{"<discord server text channel ID, bot must see the channel>"}
+    ),
+    UNCONNECT(
+            "unconnect",
+            new SpiroidCommand[0],
+            (sender, args) -> {
+                Optional<ServerTextChannel> opt = MineCord.bot.getServerTextChannelById(args[1]);
+
+                if (!opt.isPresent())
+                    return "No Channel found with ID " + args[1];
+                final ServerTextChannel stc = opt.get();
+
+                ChatHandler.postToChannels.remove(stc.getId());
+
+                return stc.sendMessage(DefaultEmbedFactory.create(stc.getServer())
+                        .setDescription(String.format(
+                                "Connection to %s removed!",
+                                MineCord.instance.getServer().getName()
+                        )))
+                        .thenApply(msg -> String.format(
+                                "Connection to %s in %s removed!",
+                                stc, stc.getServer()
+                        ))
+                        .join();
+            },
+            filter -> filter.matches("\\d{6,20}")
+                    ? new String[]{filter}
+                    : new String[]{"<discord server text channel ID, bot must see the channel>"}
+    ),
+    LIST(
+            "list",
+            new SpiroidCommand[0],
+            (sender, args) -> ChatHandler.channels.stream()
+                    .map(stc -> String.format(
+                            "%s%d %s- %s%s %sin %s%s",
+                            ChatColor.GRAY,
+                            stc.getId(),
+                            ChatColor.RESET,
+                            ChatColor.AQUA,
+                            stc.getName(),
+                            ChatColor.RESET,
+                            ChatColor.DARK_AQUA,
+                            stc.getServer().getName()
+                    ))
+                    .collect(Collectors.joining("\n", String.format("%sChat connections in this Server:\n", ChatColor.BLUE), "")),
+            filter -> new String[0]
     );
 
     private final String name;

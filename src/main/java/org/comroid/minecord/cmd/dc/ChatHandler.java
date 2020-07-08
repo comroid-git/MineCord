@@ -22,7 +22,7 @@ public enum ChatHandler implements Listener, BiInitializable {
     INSTANCE;
 
     public static final Span<Long> postToChannels = new Span<>();
-    private static final Span<ServerTextChannel> channels = postToChannels.pipe()
+    public static final Span<ServerTextChannel> channels = postToChannels.pipe()
             .map(id -> MineCord.bot.getServerTextChannelById(id))
             .flatMap(opt -> opt.map(Reference::constant).orElseGet(Reference::empty))
             .span();
