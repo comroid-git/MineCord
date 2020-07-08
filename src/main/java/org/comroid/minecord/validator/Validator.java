@@ -5,7 +5,6 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.comroid.minecord.MineCord;
-import org.comroid.spiroid.api.model.BiInitializable;
 import org.comroid.trie.TrieMap;
 import org.javacord.api.entity.user.User;
 
@@ -15,7 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
 
-public final class Validator implements BiInitializable {
+public final class Validator {
     private static final Map<UUID, Long> registered = TrieMap.parsing(UUID::fromString);
     private static final Map<UUID, Validator> instances = TrieMap.parsing(UUID::fromString);
     private final UUID mcID;
@@ -54,8 +53,7 @@ public final class Validator implements BiInitializable {
         instances.remove(uuid);
     }
 
-    @Override
-    public void initialize() {
+    public static void initialize() {
         final Configuration cfg = MineCord.instance.getConfig();
         final ConfigurationSection registered = cfg.getConfigurationSection("registered");
 
@@ -75,9 +73,12 @@ public final class Validator implements BiInitializable {
                 .log(Level.INFO, String.format("Loaded %d registered Discord users", Validator.registered.size()));
     }
 
-    @Override
-    public void deinitialize() {
+    public static void deinitialize() {
         final Configuration cfg = MineCord.instance.getConfig();
         MineCord.instance.getConfig().createSection("registered", registered);
+    }
+
+    public static int count() {
+        return registered.size();
     }
 }

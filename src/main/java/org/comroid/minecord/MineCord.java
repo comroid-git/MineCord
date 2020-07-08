@@ -1,9 +1,9 @@
 package org.comroid.minecord;
 
-import com.google.common.flogger.FluentLogger;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.comroid.minecord.cmd.dc.ChatHandler;
 import org.comroid.minecord.cmd.mc.SpigotCommands;
+import org.comroid.minecord.validator.Validator;
 import org.comroid.spiroid.api.AbstractPlugin;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
@@ -44,9 +44,12 @@ public final class MineCord extends AbstractPlugin {
         getLogger().log(Level.INFO, "Logged in to Discord as user " + bot.getYourself().getDiscriminatedName());
 
         bot.addListener(BotHandler.INSTANCE);
-        getLogger().log(Level.INFO,"Attached Bot Listener");
+        getLogger().log(Level.INFO, "Attached Bot Listener");
 
-                ChatHandler.INSTANCE.initialize();
+        Validator.initialize();
+        getLogger().log(Level.INFO, String.format("Initialized Validator; %d registered users loaded", Validator.count()));
+
+        ChatHandler.INSTANCE.initialize();
         getLogger().log(Level.INFO, String.format("Initialized %d ChatHandler connections", ChatHandler.postToChannels.size()));
     }
 
@@ -60,6 +63,9 @@ public final class MineCord extends AbstractPlugin {
         bot.disconnect();
         bot = null;
         getLogger().log(Level.INFO, "Discord bot shut down");
+
+        Validator.deinitialize();
+        getLogger().log(Level.INFO, String.format("Deinitialized Validator, stored %d registered users", Validator.count()));
     }
 
     @Override
