@@ -12,17 +12,24 @@ public enum BotHandler implements MessageCreateListener {
 
     @Override
     public void onMessageCreate(MessageCreateEvent event) {
-        if (ChatHandler.postToChannels.contains(event.getChannel().getId())
-                && event.getMessageContent().toLowerCase().contains("mc:")) {
+        if (event.getReadableMessageContent().length() > 0
+                && ChatHandler.postToChannels.contains(event.getChannel().getId())) {
             Bukkit.broadcastMessage(
                     String.format(
-                            "%sDiscord %s- %s%s%s: %s%s",
+                            "%sDiscord %s- %s%s%s %s- %s%s%s: %s%s",
                             ChatColor.DARK_AQUA,
                             ChatColor.RESET,
                             ChatColor.AQUA,
                             event.getServerTextChannel()
                                     .map(Nameable::getName)
                                     .orElse("unknown channel"),
+                            ChatColor.RESET,
+                            ChatColor.RESET,
+                            ChatColor.AQUA,
+                            event.getMessageAuthor()
+                                    .asUser()
+                                    .map(Nameable::getName)
+                                    .orElse("unknown user"),
                             ChatColor.RESET,
                             ChatColor.GRAY,
                             event.getReadableMessageContent()
