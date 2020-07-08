@@ -1,3 +1,7 @@
+jar {
+    from configurations.included.collect { it.isDirectory() ? it : zipTree(it) }
+}
+
 task buildPlugin(type: Copy, dependsOn: 'jar') {
     from jar.outputs.files.singleFile
     into file("$buildDir/plugin")

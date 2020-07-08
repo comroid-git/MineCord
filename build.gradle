@@ -8,8 +8,11 @@ apply plugin: 'java'
 group 'org.comroid'
 version '0.10-SNAPSHOT'
 
+configurations {
+    included
+}
+
 apply from: 'gradle/vars.gradle'
-apply from: 'gradle/jar.gradle'
 
 ext {
     mcVersion = '1.16.1'
@@ -36,16 +39,17 @@ dependencies {
     implementation project(':common-util:uniform')
     implementation project(':Spiroid:plugin-api')
 
-    // Discord4J
-    implementation 'com.discord4j:discord4j-core:3.1.0.RC1'
+    // Discord Lib
+    included 'org.javacord:javacord:3.0.6'
 
     // Flogger
     implementation 'com.google.flogger:flogger:0.5.1'
 
-    // JSON Serializer
-    runtimeOnly 'com.alibaba:fastjson:1.2.68'
-
     // Additional Stuff
     compileOnly "org.spigotmc:spigot-api:$mcVersion-$spigotRC-SNAPSHOT"
     compileOnly 'org.jetbrains:annotations:19.0.0'
+
+    configurations.implementation.extendsFrom configurations.included
 }
+
+apply from: 'gradle/jar.gradle'
