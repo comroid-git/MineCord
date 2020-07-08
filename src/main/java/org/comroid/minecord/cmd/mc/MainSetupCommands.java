@@ -65,9 +65,10 @@ public enum MainSetupCommands implements SpiroidCommand {
                         ))
                         .join();
             },
-            filter -> filter.matches("\\d{6,20}")
-                    ? new String[]{filter}
-                    : new String[]{"<discord server text channel ID, bot must see the channel>"}
+            filter -> ChatHandler.postToChannels.stream()
+                    .map(String::valueOf)
+                    .filter(str -> str.startsWith(filter))
+                    .toArray(String[]::new)
     ),
     LIST(
             "list",
