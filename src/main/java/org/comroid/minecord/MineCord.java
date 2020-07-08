@@ -21,7 +21,7 @@ public final class MineCord extends AbstractPlugin {
     }
 
     public MineCord() {
-        super(SpigotCommands.values(), "config", "users");
+        super(SpigotCommands.values(), "config");
     }
 
     @Override
@@ -70,10 +70,7 @@ public final class MineCord extends AbstractPlugin {
             case "config":
                 config.set("discord-token", "<token here>");
                 config.set("connections", new ArrayList<>());
-
-                break;
-            case "users":
-                config.set("registered", new ArrayList<>());
+                config.createSection("registered");
 
                 break;
             default:

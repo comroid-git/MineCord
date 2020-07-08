@@ -1,7 +1,9 @@
 package org.comroid.minecord.cmd.mc;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.comroid.minecord.MineCord;
+import org.comroid.minecord.validator.Validator;
 import org.comroid.spiroid.api.command.SpiroidCommand;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,6 +15,21 @@ public enum SpigotCommands implements SpiroidCommand {
             "minecord",
             MainSetupCommands.values(),
             (sender, args) -> MineCord.instance.toString(),
+            filter -> new String[0]
+    ),
+
+    VALIDATION(
+            "validate",
+            new SpiroidCommand[0],
+            (sender, args) -> String.format(
+                    "%sPlease send a DM containing the following text to %s%s%s in order to validate your identity:\n%s%s",
+                    ChatColor.AQUA,
+                    ChatColor.DARK_AQUA,
+                    MineCord.bot.getYourself().getDiscriminatedName(),
+                    ChatColor.AQUA,
+                    ChatColor.RED,
+                    Validator.create(sender).getSecret()
+            ),
             filter -> new String[0]
     );
 
@@ -52,4 +69,4 @@ public enum SpigotCommands implements SpiroidCommand {
     public @Nullable String execute(CommandSender sender, String[] args) {
         return function.apply(sender, args);
     }
-}
+    }

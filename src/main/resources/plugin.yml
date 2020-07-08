@@ -12,3 +12,7 @@ commands:
     description: MineCord configuration command
     permission: minecord.admin
     permission-message: "§7[§9Minecord§7] §cYou are missing the permission: §bminecord.admin§c!"
+  validate:
+    description: MineCord configuration command
+    permission: minecord.validate
+    permission-message: "§7[§9Minecord§7] §cYou are missing the permission: §bminecord.validate§c!"
