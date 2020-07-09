@@ -4,7 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 import org.comroid.minecord.MineCord;
-import org.comroid.minecord.cmd.dc.ChatHandler;
+import org.comroid.minecord.cmd.dc.MinecraftHandler;
 import org.comroid.spiroid.api.command.SpiroidCommand;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +25,7 @@ public enum MainSetupCommands implements SpiroidCommand {
                     return "No Channel found with ID " + args[1];
                 final ServerTextChannel stc = opt.get();
 
-                ChatHandler.postToChannels.add(stc.getId());
+                MinecraftHandler.postToChannels.add(stc.getId());
 
                 return stc.sendMessage(DefaultEmbedFactory.create(stc.getServer())
                         .setDescription(String.format(
@@ -52,7 +52,7 @@ public enum MainSetupCommands implements SpiroidCommand {
                     return "No Channel found with ID " + args[1];
                 final ServerTextChannel stc = opt.get();
 
-                ChatHandler.postToChannels.remove(stc.getId());
+                MinecraftHandler.postToChannels.remove(stc.getId());
 
                 return stc.sendMessage(DefaultEmbedFactory.create(stc.getServer())
                         .setDescription(String.format(
@@ -65,7 +65,7 @@ public enum MainSetupCommands implements SpiroidCommand {
                         ))
                         .join();
             },
-            filter -> ChatHandler.postToChannels.stream()
+            filter -> MinecraftHandler.postToChannels.stream()
                     .map(String::valueOf)
                     .filter(str -> str.startsWith(filter))
                     .toArray(String[]::new)
@@ -73,7 +73,7 @@ public enum MainSetupCommands implements SpiroidCommand {
     LIST(
             "list",
             new SpiroidCommand[0],
-            (sender, args) -> ChatHandler.channels.stream()
+            (sender, args) -> MinecraftHandler.channels.stream()
                     .map(stc -> String.format(
                             "%s%d %s- %s%s %sin %s%s",
                             ChatColor.GRAY,

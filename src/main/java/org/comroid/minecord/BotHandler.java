@@ -2,7 +2,7 @@ package org.comroid.minecord;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.comroid.minecord.cmd.dc.ChatHandler;
+import org.comroid.minecord.cmd.dc.MinecraftHandler;
 import org.comroid.minecord.validator.Validator;
 import org.javacord.api.entity.Nameable;
 import org.javacord.api.event.message.MessageCreateEvent;
@@ -26,7 +26,7 @@ public enum BotHandler implements MessageCreateListener {
         }
 
         if (event.getReadableMessageContent().length() > 0
-                && ChatHandler.postToChannels.contains(event.getChannel().getId())) {
+                && MinecraftHandler.postToChannels.contains(event.getChannel().getId())) {
             Bukkit.broadcastMessage(
                     String.format(
                             "%sDiscord %s- %s%s%s %s- %s%s%s: %s%s",

@@ -1,14 +1,19 @@
 package org.comroid.minecord.cmd.dc;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitTask;
 import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 import org.comroid.minecord.MineCord;
 import org.comroid.mutatio.ref.Reference;
 import org.comroid.mutatio.span.Span;
 import org.comroid.spiroid.api.model.BiInitializable;
+import org.comroid.spiroid.api.util.BukkitUtil;
 import org.comroid.util.ReflectionHelper;
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.channel.ServerChannel;
@@ -20,9 +25,10 @@ import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.message.embed.EmbedFooter;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
-public enum ChatHandler implements Listener, BiInitializable {
+public enum MinecraftHandler implements Listener, BiInitializable {
     INSTANCE;
 
     public static final Span<Long> postToChannels = new Span<>();
@@ -72,6 +78,10 @@ public enum ChatHandler implements Listener, BiInitializable {
                 .forEach((stc, embed) -> appendEmbed(stc, event.getPlayer().getDisplayName(), embed));
     }
 
+    public void playerCountStatus() {
+        MineCord.bot.updateActivity(String.format("%d online Users", Bukkit.getOnlinePlayers().size()));
+    }
+
     @Override
     public void initialize() {
         final Configuration cfg = MineCord.instance.getConfig();
@@ -82,6 +92,15 @@ public enum ChatHandler implements Listener, BiInitializable {
                 .flatMap(opt -> opt.map(Stream::of).orElseGet(Stream::empty))
                 .map(DiscordEntity::getId)
                 .forEach(postToChannels::add);
+
+        final long time = BukkitUtil.time2tick(10, TimeUnit.SECONDS);
+        Bukkit.getScheduler()
+                .scheduleSyncRepeatingTask(
+                        MineCord.instance,
+                        this::playerCountStatus,
+                        0,
+                        time
+                );
     }
 
     @Override

@@ -1,7 +1,7 @@
 package org.comroid.minecord;
 
 import org.bukkit.configuration.MemoryConfiguration;
-import org.comroid.minecord.cmd.dc.ChatHandler;
+import org.comroid.minecord.cmd.dc.MinecraftHandler;
 import org.comroid.minecord.cmd.mc.SpigotCommands;
 import org.comroid.minecord.validator.Validator;
 import org.comroid.spiroid.api.AbstractPlugin;
@@ -27,7 +27,7 @@ public final class MineCord extends AbstractPlugin {
     @Override
     public void enable() {
         getServer().getPluginManager()
-                .registerEvents(ChatHandler.INSTANCE, this);
+                .registerEvents(MinecraftHandler.INSTANCE, this);
         getLogger().log(Level.INFO, "Attached ChatHandler");
 
         getLogger().log(Level.INFO, "Loading Discord Subservice...");
@@ -48,14 +48,14 @@ public final class MineCord extends AbstractPlugin {
         Validator.initialize();
         getLogger().log(Level.INFO, String.format("Initialized Validator; %d registered users loaded", Validator.count()));
 
-        ChatHandler.INSTANCE.initialize();
-        getLogger().log(Level.INFO, String.format("Initialized %d ChatHandler connections", ChatHandler.postToChannels.size()));
+        MinecraftHandler.INSTANCE.initialize();
+        getLogger().log(Level.INFO, String.format("Initialized %d ChatHandler connections", MinecraftHandler.postToChannels.size()));
     }
 
     @Override
     public void disable() {
-        ChatHandler.INSTANCE.deinitialize();
-        getLogger().log(Level.INFO, String.format("Stored %d ChatHandler connections", ChatHandler.postToChannels.size()));
+        MinecraftHandler.INSTANCE.deinitialize();
+        getLogger().log(Level.INFO, String.format("Stored %d ChatHandler connections", MinecraftHandler.postToChannels.size()));
 
         // shutdown bot
         getLogger().log(Level.INFO, "Shutting down discord bot...");
