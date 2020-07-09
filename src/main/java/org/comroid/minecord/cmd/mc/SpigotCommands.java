@@ -6,6 +6,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.comroid.common.exception.AssertionException;
 import org.comroid.common.info.MessageSupplier;
 import org.comroid.minecord.MineCord;
 import org.comroid.minecord.validator.Validator;
@@ -29,15 +30,22 @@ public enum SpigotCommands implements SpiroidCommand {
     VALIDATION(
             "validate",
             new SpiroidCommand[0],
-            (sender, args) -> String.format(
-                    "%sPlease send a DM containing the following text to %s%s%s in order to validate your identity:\n%s%s",
-                    ChatColor.AQUA,
-                    ChatColor.DARK_AQUA,
-                    MineCord.bot.getYourself().getDiscriminatedName(),
-                    ChatColor.AQUA,
-                    ChatColor.RED,
-                    Validator.create(sender).getSecret()
-            ),
+            (sender, args) -> {
+                AssertionException.expect(true, sender instanceof Entity, "sender instanceof Entity");
+
+                if (Validator.isRegistered(((Entity) sender).getUniqueId()))
+                    return ChatColor.BLUE + "You already are registered!";
+
+                return String.format(
+                        "%sPlease send a DM containing the following text to %s%s%s in order to validate your identity:\n%s%s",
+                        ChatColor.AQUA,
+                        ChatColor.DARK_AQUA,
+                        MineCord.bot.getYourself().getDiscriminatedName(),
+                        ChatColor.AQUA,
+                        ChatColor.RED,
+                        Validator.create(sender).getSecret()
+                );
+            },
             filter -> new String[0]
     ),
     DISCORD_WHOIS(

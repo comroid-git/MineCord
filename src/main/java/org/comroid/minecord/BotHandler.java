@@ -6,9 +6,7 @@ import org.comroid.minecord.cmd.dc.ChatHandler;
 import org.comroid.minecord.validator.Validator;
 import org.javacord.api.entity.Nameable;
 import org.javacord.api.event.message.MessageCreateEvent;
-import org.javacord.api.event.user.UserStartTypingEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
-import org.javacord.api.listener.user.UserStartTypingListener;
 
 import java.util.NoSuchElementException;
 
