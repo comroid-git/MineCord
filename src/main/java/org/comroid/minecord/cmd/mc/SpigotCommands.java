@@ -37,13 +37,17 @@ public enum SpigotCommands implements SpiroidCommand {
                     return ChatColor.BLUE + "You already are registered!";
 
                 return String.format(
-                        "%sPlease send a DM containing the following text to %s%s%s in order to validate your identity:\n%s%s",
+                        "%sPlease send a DM containing the following text to %s%s%s in order to validate your identity:" +
+                                "\n%s%s" +
+                                "\n%sLink to DM: https://discord.com/channels/@me/%s",
                         ChatColor.AQUA,
                         ChatColor.DARK_AQUA,
                         MineCord.bot.getYourself().getDiscriminatedName(),
                         ChatColor.AQUA,
                         ChatColor.RED,
-                        Validator.create(sender).getSecret()
+                        Validator.create(sender).getSecret(),
+                        ChatColor.AQUA,
+                        MineCord.bot.getYourself().getIdAsString()
                 );
             },
             filter -> new String[0]
