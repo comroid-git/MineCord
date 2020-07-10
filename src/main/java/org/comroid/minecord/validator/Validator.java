@@ -15,8 +15,10 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 public final class Validator {
-    private static final Map<UUID, Long> registered = TrieMap.parsing(UUID::fromString);
+    private static final Map<Long, UUID> registeredByDiscord = TrieMap.parsingCached(Long::parseLong);
+    private static final Map<UUID, Long> registeredByMinecraft = TrieMap.parsing(UUID::fromString);
     private static final Map<UUID, Validator> instances = TrieMap.parsing(UUID::fromString);
+
     private final UUID mcID;
     private final String secret;
 
@@ -48,8 +50,8 @@ public final class Validator {
     }
 
     public static void register(UUID uuid, User user) {
-        registered.put(uuid, user.getId());
-        MineCord.instance.getConfig().createSection("registered", registered);
+        registeredByMinecraft.put(uuid, user.getId());
+        MineCord.instance.getConfig().createSection("registered", registeredByMinecraft);
         instances.remove(uuid);
     }
 
@@ -66,27 +68,27 @@ public final class Validator {
                         final long id = registered.getLong(key);
 
                         if (MineCord.bot.getUserById(id).join().getId() == id)
-                            Validator.registered.put(UUID.fromString(key), id);
+                            Validator.registeredByMinecraft.put(UUID.fromString(key), id);
                     });
 
         MineCord.instance.getLogger()
-                .log(Level.INFO, String.format("Loaded %d registered Discord users", Validator.registered.size()));
+                .log(Level.INFO, String.format("Loaded %d registered Discord users", Validator.registeredByMinecraft.size()));
     }
 
     public static void deinitialize() {
         final Configuration cfg = MineCord.instance.getConfig();
-        MineCord.instance.getConfig().createSection("registered", registered);
+        MineCord.instance.getConfig().createSection("registered", registeredByMinecraft);
     }
 
     public static int count() {
-        return registered.size();
+        return registeredByMinecraft.size();
     }
 
     public static boolean isRegistered(UUID uuid) {
-        return registered.containsKey(uuid);
+        return registeredByMinecraft.containsKey(uuid);
     }
 
     public static User getDiscordUser(UUID uuid) {
-        return MineCord.bot.getUserById(registered.get(uuid)).join();
+        return MineCord.bot.getUserById(registeredByMinecraft.get(uuid)).join();
     }
 }
