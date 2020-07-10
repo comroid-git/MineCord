@@ -31,7 +31,7 @@ public final class Validator {
     private Validator(UUID mcID) {
         this.mcID = mcID;
         this.secret = Base64.getEncoder()
-                .encodeToString((mcID.toString() + MineCord.instance.toString()).getBytes());
+                .encodeToString((mcID.toString() + System.nanoTime()).getBytes());
     }
 
     public static Validator create(CommandSender forSender) {
