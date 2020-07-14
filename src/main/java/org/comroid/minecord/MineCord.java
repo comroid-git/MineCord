@@ -1,6 +1,7 @@
 package org.comroid.minecord;
 
 import org.bukkit.configuration.MemoryConfiguration;
+import org.comroid.crystalshard.DiscordBot;
 import org.comroid.minecord.cmd.dc.MinecraftHandler;
 import org.comroid.minecord.cmd.mc.SpigotCommands;
 import org.comroid.minecord.validator.Validator;
@@ -14,7 +15,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 
 public final class MineCord extends AbstractPlugin {
-    public static DiscordApi bot;
+    public static DiscordBot bot;
 
     private Optional<String> getBotToken() {
         return Optional.ofNullable(getConfig().getString("discord-token"));
@@ -36,10 +37,7 @@ public final class MineCord extends AbstractPlugin {
             throw new NoSuchElementException("No Bot token defined in config.yml");
         if (bot != null)
             throw new IllegalStateException("Bot is not null!");
-        bot = new DiscordApiBuilder()
-                .setToken(token.get())
-                .login()
-                .join();
+        bot = DiscordBot.start(token.get());
         getLogger().log(Level.INFO, "Logged in to Discord as user " + bot.getYourself().getDiscriminatedName());
 
         bot.addListener(BotHandler.INSTANCE);
