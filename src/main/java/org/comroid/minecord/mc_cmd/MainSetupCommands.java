@@ -1,10 +1,10 @@
-package org.comroid.minecord.cmd.mc;
+package org.comroid.minecord.mc_cmd;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 import org.comroid.minecord.MineCord;
-import org.comroid.minecord.cmd.dc.MinecraftHandler;
+import org.comroid.minecord.MinecraftHandler;
 import org.comroid.spiroid.api.command.SpiroidCommand;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.jetbrains.annotations.Nullable;

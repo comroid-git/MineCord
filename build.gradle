@@ -6,7 +6,7 @@ tasks.findByName('wrapper')?.configure {
 apply plugin: 'java'
 
 group 'org.comroid'
-version '0.10-SNAPSHOT'
+version '0.20-SNAPSHOT'
 
 configurations {
     included
@@ -42,6 +42,10 @@ dependencies {
     // Discord Lib
     included 'org.javacord:javacord:3.0.6'
     included project(':javacord-utilities').tasks.findByName('jar').outputs.files
+
+    included project(':javacord-utilities') == null
+            ? 'org.comroid:javacord-utilities:1.5.2-SNAPSHOT'
+            : project(':javacord-utilities')
 
     // Flogger
     implementation 'com.google.flogger:flogger:0.5.1'

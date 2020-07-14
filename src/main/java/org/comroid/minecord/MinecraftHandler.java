@@ -1,4 +1,4 @@
-package org.comroid.minecord.cmd.dc;
+package org.comroid.minecord;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;

@@ -2,13 +2,13 @@ package org.comroid.minecord;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.comroid.minecord.cmd.dc.MinecraftHandler;
 import org.comroid.minecord.validator.Validator;
 import org.javacord.api.entity.Nameable;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 public enum BotHandler implements MessageCreateListener {
     INSTANCE;
@@ -18,9 +18,11 @@ public enum BotHandler implements MessageCreateListener {
         if (event.isPrivateMessage()) {
             Validator.findBySecret(event.getMessageContent())
                     .ifPresent(validator -> {
-                        Validator.register(validator.getUUID(), event.getMessageAuthor()
-                                .asUser()
-                                .orElseThrow(NoSuchElementException::new));
+                        Validator.register(
+                                UUID.fromString(validator.getCounterpart()),
+                                event.getMessageAuthor()
+                                        .asUser()
+                                        .orElseThrow(NoSuchElementException::new));
                         event.getChannel().sendMessage("You are now registered!");
                     });
         }

@@ -1,4 +1,4 @@
-package org.comroid.minecord.cmd.mc;
+package org.comroid.minecord.mc_cmd;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -31,6 +32,25 @@ public enum SpigotCommands implements SpiroidCommand {
             "validate",
             new SpiroidCommand[0],
             (sender, args) -> {
+                if (args.length > 0) {
+                    return Validator.findBySecret(args[0])
+                            .map(Validator::getCounterpart)
+                            .filter(str -> str.matches("\\d{6,20}"))
+                            .map(Long::parseLong)
+                            .map(id -> MineCord.bot.getUserById(id))
+                            .map(CompletableFuture::join)
+                            .map(user -> {
+                                Validator.register(((Entity) sender).getUniqueId(), user);
+                                return String.format(
+                                        "%sValidation complete! Linked to Discord Account %s%s",
+                                        ChatColor.AQUA,
+                                        ChatColor.DARK_AQUA,
+                                        user.getDiscriminatedName()
+                                );
+                            })
+                            .orElseGet(MessageSupplier.format("%sInvalid Key", ChatColor.RED));
+                }
+
                 AssertionException.expect(true, sender instanceof Entity, "sender instanceof Entity");
 
                 if (Validator.isRegistered(((Entity) sender).getUniqueId()))
