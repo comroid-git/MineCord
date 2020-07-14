@@ -40,8 +40,7 @@ dependencies {
     implementation project(':Spiroid:plugin-api')
 
     // Discord Lib
-    included 'org.javacord:javacord:3.0.6'
-    included project(':javacord-utilities').tasks.findByName('jar').outputs.files
+    included project(':CrystalShard')
 
     // Flogger
     implementation 'com.google.flogger:flogger:0.5.1'
