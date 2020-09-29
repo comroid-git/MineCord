@@ -36,7 +36,7 @@ repositories {
 
 dependencies {
     // comroid utilities
-    implementation project(':common-util:uniform')
+    implementation project(':guardian:uniform')
     implementation project(':Spiroid:plugin-api')
 
     // Discord Lib
