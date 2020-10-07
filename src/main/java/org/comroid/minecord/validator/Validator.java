@@ -6,18 +6,18 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.comroid.minecord.MineCord;
 import org.comroid.mutatio.proc.Processor;
-import org.comroid.trie.TrieMap;
 import org.javacord.api.entity.user.User;
 
 import java.util.Base64;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 public final class Validator {
-    private static final Map<UUID, Long> registeredByMinecraft = TrieMap.parsing(UUID::fromString);
-    private static final Map<String, Validator> instances = TrieMap.ofString();
+    private static final Map<UUID, Long> registeredByMinecraft = new ConcurrentHashMap<>();
+    private static final Map<String, Validator> instances = new ConcurrentHashMap<>();
 
     private final String counterpart;
     private final String secret;
@@ -56,9 +56,10 @@ public final class Validator {
     }
 
     public static void register(UUID uuid, User user) {
-        registeredByMinecraft.put(uuid, user.getId());
-        MineCord.instance.getConfig().createSection("registered", registeredByMinecraft);
-        instances.remove(uuid.toString());
+        if (instances.remove(uuid.toString()) != null) {
+            registeredByMinecraft.put(uuid, user.getId());
+            MineCord.instance.getConfig().createSection("registered", registeredByMinecraft);
+        }
     }
 
     public static void initialize() {
