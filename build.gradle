@@ -34,30 +34,27 @@ repositories {
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
+evaluationDependsOn ':Spiroid'
+evaluationDependsOn ':Spiroid:plugin-api'
+
 dependencies {
     // comroid utilities
-    implementation project(':guardian:uniform')
-    implementation project(':Spiroid:plugin-api')
+    included project(':Spiroid:plugin-api')
+    included project(':botsuite:javacord')
 
     // Discord Lib
     included 'org.javacord:javacord:3.0.6'
-    included project(':javacord-utilities').tasks.findByName('jar').outputs.files
-
-    included project(':javacord-utilities') == null
-            ? 'org.comroid:javacord-utilities:1.5.2-SNAPSHOT'
-            : project(':javacord-utilities')
 
     // Flogger
-    implementation 'com.google.flogger:flogger:0.5.1'
-
-    // Additional Stuff
-    compileOnly "org.spigotmc:spigot-api:$mcVersion-$spigotRC-SNAPSHOT"
-    compileOnly 'org.jetbrains:annotations:19.0.0'
-    compileOnly('com.google.flogger:flogger-log4j-backend:0.5.1') {
+    included 'com.google.flogger:flogger:0.5.1'
+    runtimeOnly('com.google.flogger:flogger-log4j-backend:0.5.1') {
         exclude group: 'com.sun.jmx', module: 'jmxri'
         exclude group: 'com.sun.jdmk', module: 'jmxtools'
         exclude group: 'javax.jms', module: 'jms'
     }
+
+    // Additional Stuff
+    compileOnly "org.spigotmc:spigot-api:$mcVersion-$spigotRC-SNAPSHOT"
 
     configurations.implementation.extendsFrom configurations.included
 }
