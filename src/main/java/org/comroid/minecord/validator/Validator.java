@@ -10,7 +10,6 @@ import org.javacord.api.entity.user.User;
 
 import java.util.Base64;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
