@@ -5,9 +5,13 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
+import org.comroid.minecord.validator.Validator;
 import org.comroid.mutatio.ref.Reference;
 import org.comroid.mutatio.span.Span;
+import org.comroid.spiroid.api.chat.MessageLevel;
+import org.comroid.spiroid.api.chat.PlayerNotifier;
 import org.comroid.spiroid.api.model.BiInitializable;
 import org.comroid.spiroid.api.util.BukkitUtil;
 import org.comroid.util.ReflectionHelper;
@@ -20,6 +24,7 @@ import org.javacord.api.entity.message.embed.Embed;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.message.embed.EmbedFooter;
 
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -72,6 +77,23 @@ public enum MinecraftHandler implements Listener, BiInitializable {
                                 String.format("https://minotar.net/helm/%s/100.png", event.getPlayer().getName())
                         ))
                 .forEach((stc, embed) -> appendEmbed(stc, event.getPlayer().getDisplayName(), embed));
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        final UUID plr = event.getPlayer().getUniqueId();
+
+        if (!Validator.isRegistered(plr)) {
+            final PlayerNotifier notifier = MineCord.instance.getPlayerNotifier(event.getPlayer());
+
+            notifier.sendMessage(MineCord.MessageLevel.WARN, "²[³Discord²] ³You are not registered.");
+            notifier.sendMessage(MineCord.MessageLevel.WARN, "²Please register using ³/validate², otherwise you will be kicked in ³3 minutes².");
+
+            MineCord.instance.schedule(3, TimeUnit.MINUTES, () -> {
+                if (!Validator.isRegistered(plr))
+                    event.getPlayer().kickPlayer("Please register using ingame or discord bot commands.");
+            });
+        }
     }
 
     public void playerCountStatus() {

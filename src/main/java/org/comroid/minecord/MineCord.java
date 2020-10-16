@@ -1,12 +1,15 @@
 package org.comroid.minecord;
 
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.MemoryConfiguration;
+import org.comroid.common.info.MessageSupplier;
 import org.comroid.javacord.util.commands.CommandHandler;
 import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 import org.comroid.minecord.dc_cmd.DiscordCommands;
 import org.comroid.minecord.mc_cmd.SpigotCommands;
 import org.comroid.minecord.validator.Validator;
 import org.comroid.spiroid.api.AbstractPlugin;
+import org.comroid.spiroid.api.chat.MessageLevel;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 
@@ -93,5 +96,33 @@ public final class MineCord extends AbstractPlugin {
         }
 
         return Optional.of(config);
+    }
+
+    public enum MessageLevel implements org.comroid.spiroid.api.chat.MessageLevel {
+        WARN(ChatColor.GRAY, ChatColor.RED);
+
+        private final ChatColor standard;
+        private final ChatColor highlight;
+
+        @Override
+        public ChatColor getStandardColor() {
+            return standard;
+        }
+
+        @Override
+        public ChatColor getHighlightColor() {
+            return highlight;
+        }
+
+        MessageLevel(ChatColor standard, ChatColor highlight) {
+            this.standard = standard;
+            this.highlight = highlight;
+        }
+
+        @Override
+        public String apply(String message) {
+            return message.replace('²', standard.getChar())
+                    .replace('³', highlight.getChar());
+        }
     }
 }
