@@ -1,8 +1,10 @@
 package org.comroid.minecord;
 
 import org.bukkit.configuration.MemoryConfiguration;
-import org.comroid.minecord.cmd.dc.MinecraftHandler;
-import org.comroid.minecord.cmd.mc.SpigotCommands;
+import org.comroid.javacord.util.commands.CommandHandler;
+import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
+import org.comroid.minecord.dc_cmd.DiscordCommands;
+import org.comroid.minecord.mc_cmd.SpigotCommands;
 import org.comroid.minecord.validator.Validator;
 import org.comroid.spiroid.api.AbstractPlugin;
 import org.javacord.api.DiscordApi;
@@ -15,6 +17,7 @@ import java.util.logging.Level;
 
 public final class MineCord extends AbstractPlugin {
     public static DiscordApi bot;
+    public static CommandHandler cmd;
 
     private Optional<String> getBotToken() {
         return Optional.ofNullable(getConfig().getString("discord-token"));
@@ -41,6 +44,13 @@ public final class MineCord extends AbstractPlugin {
                 .login()
                 .join();
         getLogger().log(Level.INFO, "Logged in to Discord as user " + bot.getYourself().getDiscriminatedName());
+        getLogger().log(Level.INFO, "Initializing Discord command Framework");
+        cmd = new CommandHandler(bot, true);
+        cmd.prefixes = new String[]{"minecord!"};
+        cmd.withUnknownCommandResponseStatus(true);
+        cmd.useDefaultHelp(DefaultEmbedFactory.INSTANCE);
+        cmd.registerCommandTarget(DiscordCommands.INSTANCE);
+        getLogger().log(Level.INFO, "Command Framework running");
 
         bot.addListener(BotHandler.INSTANCE);
         getLogger().log(Level.INFO, "Attached Bot Listener");

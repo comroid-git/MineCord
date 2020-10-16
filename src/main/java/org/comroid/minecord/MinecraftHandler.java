@@ -1,4 +1,4 @@
-package org.comroid.minecord.cmd.dc;
+package org.comroid.minecord;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;
@@ -6,7 +6,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
-import org.comroid.minecord.MineCord;
 import org.comroid.mutatio.ref.Reference;
 import org.comroid.mutatio.span.Span;
 import org.comroid.spiroid.api.model.BiInitializable;
