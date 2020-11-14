@@ -5,7 +5,7 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.comroid.minecord.MineCord;
-import org.comroid.mutatio.proc.Processor;
+import org.comroid.mutatio.ref.Processor;
 import org.javacord.api.entity.user.User;
 
 import java.util.Base64;

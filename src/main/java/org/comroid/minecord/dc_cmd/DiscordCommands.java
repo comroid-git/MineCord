@@ -5,7 +5,7 @@ import org.comroid.common.info.MessageSupplier;
 import org.comroid.javacord.util.commands.Command;
 import org.comroid.javacord.util.commands.CommandGroup;
 import org.comroid.minecord.validator.Validator;
-import org.comroid.mutatio.proc.Processor;
+import org.comroid.mutatio.ref.Processor;
 import org.javacord.api.entity.user.User;
 
 import java.util.Arrays;
